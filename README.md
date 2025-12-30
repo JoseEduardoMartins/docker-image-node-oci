@@ -18,7 +18,7 @@ Execução de scripts shell (`.sh`) de deploy
 
 ## 📦 O que esta imagem inclui
 
-- **Node.js 18 (Alpine)**
+- **Node.js**
 - **Yarn**
 - **Lerna**
 - **OCI CLI**
