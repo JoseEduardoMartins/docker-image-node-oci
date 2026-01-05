@@ -16,10 +16,8 @@ on:
     branches: [ "main" ]
 
 env:
-  # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository_owner }}/docker-image-node-oci
 
 
 jobs:
@@ -75,15 +73,14 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      # No step de build, você altera para usar a tag gerada:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tag_version.outputs.new_tag }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ github.repository_owner }}/docker-image-node-oci:${{ steps.tag_version.outputs.new_tag }}
+            ghcr.io/${{ github.repository_owner }}/docker-image-node-oci:latest
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
