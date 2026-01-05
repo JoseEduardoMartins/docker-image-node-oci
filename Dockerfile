@@ -7,7 +7,8 @@ RUN apk add --no-cache \
   curl \
   jq \
   python3 \
-  py3-pip
+  py3-pip \
+  git
 
 # Criar virtualenv para OCI CLI
 RUN python3 -m venv /opt/oci-cli
@@ -26,6 +27,7 @@ RUN node -v \
  && yarn -v \
  && lerna --version \
  && oci --version \
- && jq --version
+ && jq --version \
+ && git --version
 
 WORKDIR /app

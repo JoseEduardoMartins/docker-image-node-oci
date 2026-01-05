@@ -1,31 +1,27 @@
-# Docker Image – Node.js + OCI CLI
+# Docker Image – Node.js + OCI CLI + Git
 
-Imagem Docker customizada para **pipelines de CI/CD**, focada em projetos JavaScript/TypeScript que utilizam **Node.js**, **Yarn**, **Lerna** e **Oracle Cloud Infrastructure (OCI CLI)**.
+Imagem Docker customizada para **pipelines de CI/CD**, focada em projetos JavaScript/TypeScript que utilizam **Node.js**, **Yarn**, **Lerna (v8+)** e **Oracle Cloud Infrastructure (OCI CLI)**.
 
-Este repositório existe para **padronizar e estabilizar ambientes de deploy**, evitando problemas comuns de pipelines como dependências ausentes, versões inconsistentes e erros de execução (`command not found`, `exit code 127`, etc.).
+Este repositório existe para **padronizar e estabilizar ambientes de deploy**, evitando problemas comuns de pipelines como dependências ausentes, versões inconsistentes e erros de execução (`ENOGIT`, `command not found`, `exit code 127`, etc.).
 
 ## 🎯 Objetivo
 
 Fornecer uma imagem Docker pronta para uso em pipelines (ex: Bitbucket Pipelines, GitHub Actions), contendo todas as dependências necessárias para:
 
-Build de aplicações frontend (Vite, Webpack, React, Single-SPA)
-
-Execução de monorepos com Lerna
-
-Deploy de artefatos para OCI Object Storage
-
-Execução de scripts shell (`.sh`) de deploy
+- **Build de aplicações frontend** (Vite, Webpack, React, Single-SPA).
+- **Execução de monorepos com Lerna 8** (incluindo detecção de mudanças via Git).
+- **Deploy de artefatos** para OCI Object Storage.
+- **Execução de scripts shell** (`.sh`) de deploy.
 
 ## 📦 O que esta imagem inclui
 
-- **Node.js**
-- **Yarn**
-- **Lerna**
-- **OCI CLI**
-- **bash**
-- **curl**
-- **jq**
-- **python3 + pip**
+- **Node.js 22.x** (Runtime principal)
+- **Git** (Obrigatório para filtros do Lerna `--since` / `--filter`)
+- **Yarn** (Gerenciador de pacotes)
+- **Lerna** (Gerenciamento de monorepo)
+- **OCI CLI** (Interface de linha de comando da Oracle Cloud)
+- **bash / curl / jq** (Utilitários para scripts de automação)
+- **python3 + pip** (Base para instalação do OCI CLI)
 
 Tudo já configurado e validado no build da imagem.
 
@@ -53,7 +49,14 @@ Exemplo de step para deploy:
     name: Deploy TEST
     image: ghcr.io/joseeduardomartins/docker-image-node-oci:1.0.0
     script:
-      - yarn lerna exec --since main -- yarn deploy
+      # Essencial para permitir que o Git funcione dentro do container do Bitbucket
+      - git config --global --add safe.directory /opt/atlassian/pipelines/agent/build
+      
+      # Garante que a tag/branch de comparação exista no histórico local
+      - git fetch origin test-oci:test-oci
+      
+      # Execução do deploy apenas nos pacotes alterados desde a tag
+      - yarn lerna run deploy --concurrency 1 --since test-oci
 ```
 
 ## 🧪 Testar a imagem localmente
@@ -84,8 +87,7 @@ jq --version
 
 ## 📌 Casos de uso comuns
 
-- Monorepos com Lerna
-- Microfrontends com Single-SPA
-- Build com Vite / Webpack
-- Deploy de arquivos estáticos no OCI Object Storage
-- Pipelines com scripts .sh
+- Monorepos com Lerna 8: Deploy inteligente apenas de pacotes modificados.
+- Microfrontends com Single-SPA: Build e atualização automatizada de import-map.json no OCI.
+- Storybook: Upload de documentação estática para o Object Storage com suporte a Content-Type.
+- Pipelines Complexos: Automação via scripts .sh que dependem de manipulação de JSON (jq) e chamadas de API (curl).
