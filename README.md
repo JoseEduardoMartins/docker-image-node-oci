@@ -1,7 +1,5 @@
 # Docker Image – Node.js + OCI CLI + Git
 
-Imagem Docker customizada para **pipelines de CI/CD**, focada em projetos JavaScript/TypeScript que utilizam **Node.js**, **Yarn**, **Lerna (v8+)** e **Oracle Cloud Infrastructure (OCI CLI)**.
-
 Este repositório existe para **padronizar e estabilizar ambientes de deploy**, evitando problemas comuns de pipelines como dependências ausentes, versões inconsistentes e erros de execução (`ENOGIT`, `command not found`, `exit code 127`, etc.).
 
 ## 🎯 Objetivo
