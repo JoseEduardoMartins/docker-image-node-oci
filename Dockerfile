@@ -8,7 +8,9 @@ RUN apk add --no-cache \
   jq \
   python3 \
   py3-pip \
-  git
+  git \
+  openssh-client \
+  openssh
 
 # Criar virtualenv para OCI CLI
 RUN python3 -m venv /opt/oci-cli
@@ -28,6 +30,7 @@ RUN node -v \
  && lerna --version \
  && oci --version \
  && jq --version \
- && git --version
+ && git --version \
+ && ssh -V
 
 WORKDIR /app
